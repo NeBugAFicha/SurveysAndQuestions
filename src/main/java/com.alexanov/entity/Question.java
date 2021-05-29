@@ -8,10 +8,11 @@ public class Question {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
     @Enumerated(EnumType.STRING)
-    private QType qType = QType.TEXT;
+    private QType qType;
     private String text;
-    private String answer = "";
+    private String answer;
     public Question() {
+        this.qType =  QType.TEXT;
     }
     @ManyToOne(cascade = {
             CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,

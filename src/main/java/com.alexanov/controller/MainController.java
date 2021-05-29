@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 @Controller
 public class MainController {
-    private Map<Question,List<String>> questAndAnsw = new HashMap<Question,List<String>>();
+    private HashMap<Question,List<String>> questAndAnsw = new HashMap<Question,List<String>>();
     @Autowired
     UserRepo userRepo;
     @Autowired
@@ -32,9 +32,10 @@ public class MainController {
     }
     @GetMapping("/main")
     public String mainPage(Model model){
+        HashMap<Question,List<String>> questAndAnswTemp = new HashMap<Question,List<String>>();
+        questAndAnswTemp.putAll(questAndAnsw);
         model.addAttribute("qTypes", QType.values());
-        model.addAttribute("questions",questAndAnsw.keySet());
-        model.addAttribute("questAndAnsw",questAndAnsw);
+        model.addAttribute("questAndAnsw",questAndAnswTemp);
         model.addAttribute("text",QType.TEXT);
         return "main";
     }
@@ -60,9 +61,10 @@ public class MainController {
     @GetMapping("/sort/{qType}/{question}")
     public String sortType(@PathVariable QType qType, @PathVariable Question question){
         question.setqType(qType);
+        questAndAnsw.remove(question);
+        if(qType.equals(QType.TEXT)||question.getAnswer()==null) question.setAnswer("");
         questAndAnsw.put(question, Arrays.asList(question.getAnswer().split(" ")));
         questionRepo.save(question);
-        System.out.println(question.getqType() +" "+questAndAnsw.size());
         return "redirect:/main";
     }
     @GetMapping("/addNewEmptyQuestion")
@@ -72,17 +74,37 @@ public class MainController {
         questionRepo.save(question);
         return "redirect:/main";
     }
-    @GetMapping("/addAnswer/{question}")
-    public String addAnswer(@PathVariable Question question, Model model){
-        question.setAnswer(question.getAnswer()+" New answer");
-        questAndAnsw.put(question,Arrays.asList(question.getAnswer().split(" ")));
+    @GetMapping("/addNewAnswer/{question}")
+    public String addNewAnswer(@PathVariable Question question, Model model){
+        question.setAnswer(question.getAnswer()+" NewAnswer");
+        questAndAnsw.put(question, Arrays.asList(question.getAnswer().split(" ")));
         questionRepo.save(question);
         return "redirect:/main";
     }
-    @GetMapping("deleteQuestion/{question}")
+    @GetMapping("/addAnswer")
+    public String addAnswer(@RequestParam String answer,@RequestParam Question question){
+        question.setAnswer(question.getAnswer()+" "+answer);
+        questAndAnsw.remove(question);
+        questAndAnsw.put(question, Arrays.asList(question.getAnswer().split(" ")));
+        questionRepo.save(question);
+        return "redirect:/main";
+    }
+    @GetMapping("/deleteQuestion/{question}")
     public String deleteQuestion(@PathVariable Question question){
         questAndAnsw.remove(question);
         questionRepo.delete(question);
         return "redirect:/main";
     }
+    @GetMapping("/deleteAnswer")
+    public String deleteAnswer(@RequestParam String answer,@RequestParam Question question){
+        List<String> answers = questAndAnsw.get(question);
+        answers.remove(answer);
+        question.setAnswer(String.join(" ",answers));
+        questAndAnsw.remove(question);
+        questAndAnsw.put(question,answers);
+        questionRepo.delete(question);
+
+        return "redirect:/main";
+    }
+
 }

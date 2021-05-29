@@ -12,7 +12,7 @@
     <!--Добавление нового вопроса-->
     <a href="/addNewEmptyQuestion">Add New Empty Question to the Survey</a><br>
     <!--Перечисление всех вопросов этого опроса-->
-    <#list questions as question>
+    <#list questAndAnsw as question,answers>
         <!--Форма каждого вопроса, которую можно заполнить и добавить новый вопрос либо же изменить существующий-->
         <form action="/addOrUpdateQuestion" method="post">
             <div ><label> Text of question : <input type="text" name="title" <#if question.text??>value="${question.text}"</#if>/> </label></div>
@@ -24,16 +24,23 @@
                     <li><a href="/sort/${qTypes[2]}/${question.id}">${qTypes[2]}</a></li>
                 </ul>
             </div>
-                <#if question.qType.toString()!=text>
-                    <a href="/addAnswer/${question.id}">Add another answer</a></br>
-                        <#list questAndAnsw.get(question) as answer>
-                            <form action="/addOrUpdateAnswer" method="post">
-                                <input type="text" name="answer" value="${answer}">
-                                <input type="hidden" name="_csrf" value="${_csrf.token}" />
-                                <button type="submit">Add answer</button>
-                            </form></br>
+                <div <#if question.qType == "TEXT">hidden</#if>>
+                        <a href="/addNewAnswer/${question.id}">Add another answer</a></br>
+                        <#list answers as answer>
+                                <form method="get" action="/addAnswer" id="${answer}">
+                                    <input type="text" name="answer" value="${answer}">
+                                    <input type="hidden" name="question" value="${question.id}">
+                                    <input type="hidden" name="_csrf" value="${_csrf.token}" />
+                                </form>
+                                <button form="${answer}" type="submit">Add answer to question</button>
+                                <form method="get" action="/deleteAnswer" id="delete${answer}">
+                                    <input type="hidden" name="answer" value="${answer}">
+                                    <input type="hidden" name="question" value="${question.id}">
+                                    <input type="hidden" name="_csrf" value="${_csrf.token}" />
+                                    <button form="delete${answer}" type="submit">Delete answer</button>
+                                </form>
                         </#list>
-                </#if>
+                </div>
             <input type="hidden" name="_csrf" value="${_csrf.token}" />
             <button type="submit">Add/Update question</button>
             <a href="deleteQuestion/${question.id}">Delete question</a>
