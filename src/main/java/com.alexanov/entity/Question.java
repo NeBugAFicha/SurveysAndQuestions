@@ -6,10 +6,11 @@ import javax.persistence.*;
 public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
-    private QType qType;
+    private int id;
+    @Enumerated(EnumType.STRING)
+    private QType qType = QType.TEXT;
     private String text;
-    private String answer;
+    private String answer = "";
     public Question() {
     }
     @ManyToOne(cascade = {
@@ -51,10 +52,6 @@ public class Question {
         return answer;
     }
 
-    public void setAnswers(String answer) {
-        this.answer = answer;
-    }
-
     public void setAnswer(String answer) {
         this.answer = answer;
     }
@@ -65,5 +62,15 @@ public class Question {
 
     public void setSurvey(Survey survey) {
         this.survey = survey;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return this.id==((Question) obj).getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return 1;
     }
 }

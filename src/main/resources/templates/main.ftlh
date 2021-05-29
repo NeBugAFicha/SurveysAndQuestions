@@ -9,32 +9,38 @@
 <form action="/addSurvey" method="post">
     <div ><label> Survey title : <input type="text" name="title"/> </label></div>
     <div><label> Survey description: <input type="title" name="description"/> </label></div>
+    <!--Добавление нового вопроса-->
     <a href="/addNewEmptyQuestion">Add New Empty Question to the Survey</a><br>
+    <!--Перечисление всех вопросов этого опроса-->
     <#list questions as question>
+        <!--Форма каждого вопроса, которую можно заполнить и добавить новый вопрос либо же изменить существующий-->
         <form action="/addOrUpdateQuestion" method="post">
             <div ><label> Text of question : <input type="text" name="title" <#if question.text??>value="${question.text}"</#if>/> </label></div>
+            <!--Выбор типа вопроса-->
             <div>Type of question:
-                <form method="get" action="/sort">
-                    <select name="qType">
-                        <#list qTypes as qType>
-                            <option value=${qType} <#if selectedQType??&&selectedQType=qType>selected</#if>>${qType}</option>
-                        </#list>
-                    </select>
-                    <button type="submit">Выбрать тип</button>
-                </form>
+                <ul>
+                    <li><a href="/sort/${qTypes[0]}/${question.id}">${qTypes[0]}</a></li>
+                    <li><a href="/sort/${qTypes[1]}/${question.id}">${qTypes[1]}</a></li>
+                    <li><a href="/sort/${qTypes[2]}/${question.id}">${qTypes[2]}</a></li>
+                </ul>
             </div>
-            <#if choosedQType==1>
-                <input type="text" name="answer">
-            <#elseif choosedQType==2>
-                <a href="/addAnswer/${question.id}">Add another answer</a>
-                <#list Arrays.asList(question.answers.split("\n")) as answer>
-                    <input type="text" value="${answer}">
-                </#list>
-            </#if>
-        </form>
+                <#if question.qType.toString()!=text>
+                    <a href="/addAnswer/${question.id}">Add another answer</a></br>
+                        <#list questAndAnsw.get(question) as answer>
+                            <form action="/addOrUpdateAnswer" method="post">
+                                <input type="text" name="answer" value="${answer}">
+                                <input type="hidden" name="_csrf" value="${_csrf.token}" />
+                                <button type="submit">Add answer</button>
+                            </form></br>
+                        </#list>
+                </#if>
+            <input type="hidden" name="_csrf" value="${_csrf.token}" />
+            <button type="submit">Add/Update question</button>
+            <a href="deleteQuestion/${question.id}">Delete question</a>
+        </form></br>
     </#list>
     <input type="hidden" name="_csrf" value="${_csrf.token}" />
-    <div><input type="submit" value="add survey"/></div>
+    <button type="submit">Add survey</button>
 </form>
 <form action="/logout" method="post">
     <input type="hidden" name="_csrf" value="${_csrf.token}" />
