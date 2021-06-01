@@ -13,6 +13,7 @@ public class Question {
     private String answer;
     public Question() {
         this.qType =  QType.TEXT;
+        this.answer = "";
     }
     @ManyToOne(cascade = {
             CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,

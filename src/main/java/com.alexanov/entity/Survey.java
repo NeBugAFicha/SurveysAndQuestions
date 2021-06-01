@@ -8,7 +8,7 @@ import java.util.List;
 public class Survey {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Integer id;
+    private int id;
     private String title;
     private String description;
     private Calendar startTime;
@@ -40,6 +40,10 @@ public class Survey {
         return startTime;
     }
 
+    public void setStartTime(Calendar startTime) {
+        this.startTime = startTime;
+    }
+
     public Calendar getEndTime() {
         return endTime;
     }
@@ -61,6 +65,7 @@ public class Survey {
     }
 
     public void setQuestions(List<Question> questions) {
+
         this.questions = questions;
     }
 

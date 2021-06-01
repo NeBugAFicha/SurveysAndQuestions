@@ -4,6 +4,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -21,10 +22,6 @@ public class User implements UserDetails {
     private Status status;
     @Enumerated(EnumType.STRING)
     private Role role;
-
-    /*@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private List<Survey> surveys;*/
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
@@ -70,14 +67,6 @@ public class User implements UserDetails {
     public void setId(Integer id) {
         this.id = id;
     }
-
-    /*public List<Survey> getSurveys() {
-        return surveys;
-    }
-
-    public void setSurveys(List<Survey> surveys) {
-        this.surveys = surveys;
-    }*/
 
     public List<Question> getQuestions() {
         return questions;
