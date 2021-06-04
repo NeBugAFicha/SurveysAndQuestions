@@ -1,6 +1,7 @@
 package com.alexanov.controller;
 
 import com.alexanov.entity.User;
+import com.alexanov.repos.SurveyRepo;
 import com.alexanov.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -11,10 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 @Controller
 public class MainController {
     @Autowired
+    SurveyRepo surveyRepo;
+    @Autowired
     UserService userService;
     @GetMapping
     public String neutralPage(Model model){
-        return "hello";
+        model.addAttribute("surveys", surveyRepo.findAll());
+        return "allSurveys";
     }
     @GetMapping("/registration")
     public String addUser(){

@@ -22,6 +22,7 @@ public class AdminController {
     UserService userService;
     @GetMapping("/main")
     public String mainPage(Model model){
+        if(userService.getCurrentSurvey()!=null) model.addAttribute("currentSurvey",userService.getCurrentSurvey());
         model.addAttribute("qTypes", QType.values());
         model.addAttribute("questAndAnsw",userService.getQuesAndAnsw());
         model.addAttribute("text",QType.TEXT);
@@ -47,13 +48,13 @@ public class AdminController {
         return "redirect:/main";
     }
     @GetMapping("/deleteQuestion/{question}")
-    public String deleteQuestion(@PathVariable Question question){
-        userService.deleteQuestion(question);
+    public String deleteQuestion(@PathVariable Question question, @AuthenticationPrincipal User user){
+        userService.deleteQuestion(question, user);
         return "redirect:/main";
     }
     @PostMapping("/deleteAnswer")
-    public String deleteAnswer(@RequestParam String answer, @RequestParam int questionId){
-        userService.deleteAnswer(answer,questionId);
+    public String deleteAnswer(@RequestParam String answer, @RequestParam Question question){
+        userService.deleteAnswer(answer,question);
         return "redirect:/main";
     }
     @GetMapping("/updateAnswer/{questionId}/{answer}")
@@ -70,13 +71,19 @@ public class AdminController {
         return "redirect:/main";
     }
     @PostMapping("/addOrUpdateQuestion")
-    public String addOrUpdateAnswer(@RequestParam String text, @RequestParam Question question){
-        userService.addOrUpdateAnswer(text,question);
+    public String addOrUpdateQuestion(@RequestParam String text, @RequestParam Question question, @AuthenticationPrincipal User user){
+        userService.addOrUpdateQuestion(text,question, user);
         return "redirect:/main";
     }
     @PostMapping("/addSurvey")
-    public String addSurvey(@RequestParam String title, @RequestParam String description, @AuthenticationPrincipal User user){
-        userService.addSurvey(title,description,user);
+    public String addSurvey(@RequestParam String title, @RequestParam String description, @RequestParam User user){
+        if(userService.getCurrentSurvey()==null) userService.addSurvey(title,description,user);
+        else userService.updateSurvey(title,description,user);
         return "redirect:/";
+    }
+    @GetMapping("/updateSurvey/{survey}")
+    public String updateSurvey(@PathVariable Survey survey){
+        userService.setCurrentSurvey(survey);
+        return "redirect:/main";
     }
 }

@@ -23,8 +23,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST,mappedBy = "user")
     private List<Question> questions;
     public User(){}
     public String getUsername() {
@@ -76,6 +75,19 @@ public class User implements UserDetails {
         this.questions = questions;
     }
 
+    /*public void addQuestion(Question question){
+        this.questions.add(question);
+    }
+    public void updateQuestion(Question question){
+        question.setUser(this);
+        this.removeQuestion(question);
+        this.addQuestion(question);
+    }
+
+    public void removeQuestion(Question question){
+        this.questions.remove(question);
+        question.setUser(null);
+    }*/
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return role.getAuthorities();

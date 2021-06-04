@@ -1,5 +1,7 @@
 package com.alexanov.entity;
 
+import org.hibernate.engine.internal.Cascade;
+
 import javax.persistence.*;
 
 @Entity
@@ -15,17 +17,15 @@ public class Question {
         this.qType =  QType.TEXT;
         this.answer = "";
     }
-    @ManyToOne(cascade = {
-            CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,
-            CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE,
+            CascadeType.REFRESH})
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
-    /*@ManyToOne(cascade = {
-            CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST,
-            CascadeType.REFRESH}, fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE,
+            CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
-    private User user ;*/
+    private User user ;
     public int getId() {
         return id;
     }
@@ -66,6 +66,15 @@ public class Question {
         this.survey = survey;
     }
 
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+
     @Override
     public boolean equals(Object obj) {
         return this.id==((Question) obj).getId();
@@ -74,5 +83,10 @@ public class Question {
     @Override
     public int hashCode() {
         return 1;
+    }
+
+    @Override
+    public String toString() {
+        return getId()+" "+getqType()+" "+getText()+" "+getAnswer()+" "+ getSurvey().getId()+" "+getUser().getId();
     }
 }

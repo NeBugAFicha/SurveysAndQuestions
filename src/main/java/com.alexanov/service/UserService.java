@@ -24,6 +24,7 @@ public class UserService implements UserDetailsService {
             return o1.getId()-o2.getId();
         }
     });
+    private Survey currentSurvey;
     @Autowired
     private UserRepo userRepo;
     @Autowired
@@ -68,12 +69,11 @@ public class UserService implements UserDetailsService {
         questAndAnsw.put(question, answers);
         questionRepo.save(question);
     }
-    public void deleteQuestion(Question question){
+    public void deleteQuestion(Question question, User user){
         questAndAnsw.remove(question);
         questionRepo.delete(question);
     }
-    public void deleteAnswer(String answer, int questionId){
-        Question question = questionRepo.findById(questionId).get();
+    public void deleteAnswer(String answer, Question question){
         ArrayList<String> answers = questAndAnsw.get(question);
         questAndAnsw.remove(question);
         answers.remove(answer);
@@ -87,13 +87,12 @@ public class UserService implements UserDetailsService {
         questAndAnsw.remove(question);
         question.setAnswer(String.join("\n", answers));
         questAndAnsw.put(question, answers);
-        questionRepo.save(question);
     }
-    public void addOrUpdateAnswer(String text, Question question){
+    public void addOrUpdateQuestion(String text, Question question, User user){
         ArrayList<String> answers = questAndAnsw.get(question);
         questAndAnsw.remove(question);
         question.setText(text);
-        questAndAnsw.put(question, answers);
+        questAndAnsw.put(question,answers);
         questionRepo.save(question);
     }
     public void addSurvey(String title, String description, User user){
@@ -103,13 +102,41 @@ public class UserService implements UserDetailsService {
         survey.setTitle(title);
         survey.setDescription(description);
         surveyRepo.save(survey);
-        questAndAnsw.keySet().stream().forEach(x->x.setSurvey(survey));
-        User user1 = userRepo.findByUsername(user.getUsername());
-        user1.getQuestions().addAll(questAndAnsw.keySet().stream().collect(Collectors.toList()));
-        userRepo.save(user1);
+        questAndAnsw.keySet().stream().forEach(question -> {
+            question.setSurvey(survey);
+            question.setUser(user);
+            questionRepo.save(question);
+        });
         questAndAnsw.clear();
+        currentSurvey = null;
+    }
+    public void updateSurvey(String title, String description, User user){
+        currentSurvey.setTitle(title);
+        currentSurvey.setDescription(description);
+        questAndAnsw.keySet().stream().forEach(question -> {
+            if(!user.getQuestions().contains(question)) {
+                question.setSurvey(currentSurvey);
+                questionRepo.save(question);
+                Question question1 = questionRepo.findById(question.getId()).get();
+                question1.setUser(user);
+                user.getQuestions().add(question1);
+                userRepo.save(user);
+            }
+        });
+        questAndAnsw.clear();
+        currentSurvey = null;
     }
     public Map<Question, ArrayList<String>> getQuesAndAnsw(){
         return questAndAnsw;
+    }
+
+
+    public Survey getCurrentSurvey() {
+        return currentSurvey;
+    }
+
+    public void setCurrentSurvey(Survey currentSurvey) {
+        this.currentSurvey = currentSurvey;
+        currentSurvey.getQuestions().stream().forEach(question -> questAndAnsw.put(question, new ArrayList<String>(Arrays.asList(question.getAnswer().split("\n")))));
     }
 }

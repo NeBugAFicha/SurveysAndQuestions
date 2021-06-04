@@ -14,7 +14,7 @@ public class Survey {
     private Calendar startTime;
     private Calendar endTime;
 
-    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey")
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "survey", orphanRemoval = true)
     private List<Question> questions;
     public Survey(){
     }
@@ -65,8 +65,19 @@ public class Survey {
     }
 
     public void setQuestions(List<Question> questions) {
-
         this.questions = questions;
     }
+    /*public void removeQuestion(Question question){
+        this.questions.remove(question);
+        question.setSurvey(null);
+    }
+    public void addQuestion(Question question){
+        this.questions.add(question);
+    }
+    public void updateQuestion(Question question){
+        question.setSurvey(this);
+        this.removeQuestion(question);
+        this.addQuestion(question);
+    }*/
 
 }
