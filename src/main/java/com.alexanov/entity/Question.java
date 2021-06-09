@@ -17,13 +17,11 @@ public class Question {
         this.qType =  QType.TEXT;
         this.answer = "";
     }
-    @ManyToOne(cascade = {CascadeType.MERGE,
-            CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "survey_id")
     private Survey survey;
 
-    @ManyToOne(cascade = {CascadeType.MERGE,
-            CascadeType.REFRESH})
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
     private User user ;
     public int getId() {
@@ -85,8 +83,5 @@ public class Question {
         return 1;
     }
 
-    @Override
-    public String toString() {
-        return getId()+" "+getqType()+" "+getText()+" "+getAnswer()+" "+ getSurvey().getId()+" "+getUser().getId();
-    }
+
 }

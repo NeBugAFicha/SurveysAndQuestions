@@ -40,13 +40,13 @@
                 <button form="${question.id}deleteAnswer${answer}" type="submit">Delete answer</button>
             </form>
             <a href="/updateAnswer/${question.id}/${answer}">UpdateAnswer</a>
-                <form action="/updateAnswer" method="post" id="${question.id}updateAnswer${answer}" <#if answer!=updateTogglerForAnswers || updateTogglerForAnswersQId!=question.id> hidden <#else>style="display: inline;"</#if>>
-                    <input type="text" name="answer" value="${answer}"/>
-                    <input type="hidden" name="oldAnswer" value="${answer}"/>
-                    <input type="hidden" name="question" value="${question.id}" />
-                    <input type="hidden" name="_csrf" value="${_csrf.token}" />
-                    <button form="${question.id}updateAnswer${answer}" type="submit">update answer</button>
-                </form>
+            <form action="/updateAnswer" method="post" id="${question.id}updateAnswer${answer}" <#if answer!=updateTogglerForAnswers || updateTogglerForAnswersQId!=question.id> hidden <#else>style="display: inline;"</#if>>
+                <input type="text" name="answer" value="${answer}"/>
+                <input type="hidden" name="oldAnswer" value="${answer}"/>
+                <input type="hidden" name="question" value="${question.id}" />
+                <input type="hidden" name="_csrf" value="${_csrf.token}" />
+                <button form="${question.id}updateAnswer${answer}" type="submit">update answer</button>
+            </form>
             </br>
         </#list>
         <form method="post" action="/addAnswer" id="addAnswer${question.id}" >

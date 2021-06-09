@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Map;
+
 
 @Controller
 @PreAuthorize("hasAuthority('isAdmin')")
@@ -44,12 +48,12 @@ public class AdminController {
     }
     @PostMapping("/addAnswer")
     public String addAnswer(@RequestParam String answer,@RequestParam Question question){
-        userService.addAnswer(answer,question);
+        if(!answer.trim().isEmpty()) userService.addAnswer(answer.trim(),question);
         return "redirect:/main";
     }
     @GetMapping("/deleteQuestion/{question}")
     public String deleteQuestion(@PathVariable Question question, @AuthenticationPrincipal User user){
-        userService.deleteQuestion(question, user);
+        userService.deleteQuestion(question);
         return "redirect:/main";
     }
     @PostMapping("/deleteAnswer")
@@ -65,18 +69,24 @@ public class AdminController {
     }
     @PostMapping("/updateAnswer")
     public String updateAnswer(@RequestParam String answer, @RequestParam String oldAnswer, @RequestParam Question question){
+        System.out.println(answer +" "+ oldAnswer);
+        if(answer==null||answer.trim().isEmpty()) return "redirect:/main";
+        userService.updateAnswer(answer.trim(),oldAnswer,question);
         updateTogglerForAnswers = "";
         updateTogglerForAnswersQId = -1;
-        userService.updateAnswer(answer,oldAnswer,question);
         return "redirect:/main";
     }
     @PostMapping("/addOrUpdateQuestion")
-    public String addOrUpdateQuestion(@RequestParam String text, @RequestParam Question question, @AuthenticationPrincipal User user){
-        userService.addOrUpdateQuestion(text,question, user);
+    public String addOrUpdateQuestion(@RequestParam String text, @RequestParam Question question){
+        if(!text.trim().isEmpty()) userService.addOrUpdateQuestion(text.trim(),question);
         return "redirect:/main";
     }
     @PostMapping("/addSurvey")
     public String addSurvey(@RequestParam String title, @RequestParam String description, @RequestParam User user){
+        if(title.trim().isEmpty()||description.trim().isEmpty()||userService.getQuesAndAnsw().size()==0) return "redirect:/main";
+        for(Map.Entry<Question, ArrayList<String>> entry: userService.getQuesAndAnsw().entrySet()){
+            if(entry.getKey().getText()==null) return "redirect:/main";
+        }
         if(userService.getCurrentSurvey()==null) userService.addSurvey(title,description,user);
         else userService.updateSurvey(title,description,user);
         return "redirect:/";
@@ -85,5 +95,16 @@ public class AdminController {
     public String updateSurvey(@PathVariable Survey survey){
         userService.setCurrentSurvey(survey);
         return "redirect:/main";
+    }
+    @GetMapping("/deleteSurvey/{survey}")
+    public String deleteSurvey(@PathVariable Survey survey, @AuthenticationPrincipal User user){
+        userService.deleteSurvey(survey, user);
+        return "redirect:/";
+    }
+    @GetMapping("/finishSurvey/{survey}")
+    public String finishSurvey(@PathVariable Survey survey){
+        survey.setEndTime(Calendar.getInstance());
+        userService.finishSurvey(survey);
+        return "redirect:/";
     }
 }
