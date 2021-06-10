@@ -12,25 +12,31 @@
   <a href="/main">ADD NEW SURVEY</a>
 </#if>
 <div class="card-columns">
-    <#list surveys as survey>
+    <#list surveys as survey, isCompleted>
         <div class="card my-3">
             Title: ${survey.title}</br>
             Description: ${survey.description}</br>
             Questions:
             <#list survey.getQuestions() as question>
-                <div class="m-2">
-                    ${question.getText()}
+                <div class="m-2" >
+                    <#if question.getUser().getRole().toString()=="ADMIN"> ${question.getText()}: ${question.getAnswer()}</#if>
                 </div>
             </#list>
             <#if user.role.toString()=='ADMIN'>
-                <a href="/updateSurvey/${survey.id}">Update Survey</a>
+                <#if survey.endTime??==false>
+                    <a href="/updateSurvey/${survey.id}">Update Survey</a>
+                    <a href="/finishSurvey/${survey.id}">Finish Survey</a>
+                </#if>
                 <a href="/deleteSurvey/${survey.id}">Delete Survey</a>
-                <a href="/finishSurvey/${survey.id}">Finish Survey</a>
             </#if>
-            <a href="/completeSurvey/${survey.id}">Complete Survey</a>
+            <#if isCompleted??==false>
+                <#if survey.endTime??> The survey is finished</#if>
+                <a href="/completeSurvey/${survey.id}">Complete Survey</a>
+            </#if>
         </div>
     </#list>
 </div>
+<a href="/showAllCompletedSurveys/${user.id}">Show All Completed Surveys</a>
 <form action="/logout" method="post">
     <input type="hidden" name="_csrf" value="${_csrf.token}" />
     <button class="btn btn-primary" type="submit">Выйти</button>
