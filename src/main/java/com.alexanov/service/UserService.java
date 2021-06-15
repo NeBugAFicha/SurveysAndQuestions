@@ -66,10 +66,8 @@ public class UserService implements UserDetailsService {
         if(currentSurvey!=null&&question.getSurvey()!=null){
             question.setSurvey(null);
             question.setUser(null);
-            int i = question.getId();
-            questionRepo.delete(question);
-            questionRepo.delete(questionRepo.findById(i).get());
-        }else questionRepo.delete(question);
+        }
+        questionRepo.delete(question);
     }
     public void deleteAnswer(String answer, Question questionTemp){
         ArrayList<String> answers = questAndAnsw.get(questionTemp);
@@ -136,9 +134,8 @@ public class UserService implements UserDetailsService {
         questions.stream().forEach(question -> {
             question.setSurvey(null);
             question.setUser(null);
-            questionRepo.save(question);
+            questionRepo.delete(question);
         });
-        questionRepo.deleteAll(questions);
         surveyRepo.delete(survey);
     }
     public void finishSurvey(Survey survey){

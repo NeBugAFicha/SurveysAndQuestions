@@ -9,7 +9,7 @@
 <#include "security.ftlh">
 <h1>Hello</h1>
 <#if user.role.toString()=='ADMIN'>
-  <a href="/main">ADD NEW SURVEY</a>
+  <a href="/editSurvey">ADD NEW SURVEY</a>
 </#if>
 <div class="card-columns">
     <#list surveys as survey, isCompleted>

@@ -24,68 +24,68 @@ public class AdminController {
     private int updateTogglerForAnswersQId = -1;
     @Autowired
     UserService userService;
-    @GetMapping("/main")
-    public String mainPage(Model model){
+    @GetMapping("/editSurvey")
+    public String editSurvey(Model model){
         if(userService.getCurrentSurvey()!=null) model.addAttribute("currentSurvey",userService.getCurrentSurvey());
         model.addAttribute("qTypes", QType.values());
         model.addAttribute("questAndAnsw",userService.getQuesAndAnsw());
         model.addAttribute("text",QType.TEXT);
         model.addAttribute("updateTogglerForAnswers",updateTogglerForAnswers);
         model.addAttribute("updateTogglerForAnswersQId",updateTogglerForAnswersQId);
-        return "main";
+        return "editSurvey";
     }
 
 
     @GetMapping("/chooseQType/{qType}/{question}")
     public String chooseQType(@PathVariable QType qType, @PathVariable Question question){
         userService.chooseQType(qType,question);
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @GetMapping("/addNewEmptyQuestion")
     public String addNewEmptyQuestion(){
         userService.addNewEmptyQuestion();
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @PostMapping("/addAnswer")
     public String addAnswer(@RequestParam String answer,@RequestParam Question question){
         if(!answer.trim().isEmpty()) userService.addAnswer(answer.trim(),question);
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @GetMapping("/deleteQuestion/{question}")
     public String deleteQuestion(@PathVariable Question question, @AuthenticationPrincipal User user){
         userService.deleteQuestion(question);
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @PostMapping("/deleteAnswer")
     public String deleteAnswer(@RequestParam String answer, @RequestParam Question question){
         userService.deleteAnswer(answer,question);
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @GetMapping("/updateAnswer/{questionId}/{answer}")
     public String getUpdateToggleForAnswers(@PathVariable String answer, @PathVariable int questionId){
         updateTogglerForAnswers = answer;
         updateTogglerForAnswersQId = questionId;
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @PostMapping("/updateAnswer")
     public String updateAnswer(@RequestParam String answer, @RequestParam String oldAnswer, @RequestParam Question question){
         System.out.println(answer +" "+ oldAnswer);
-        if(answer==null||answer.trim().isEmpty()) return "redirect:/main";
+        if(answer==null||answer.trim().isEmpty()) return "redirect:/editSurvey";
         userService.updateAnswer(answer.trim(),oldAnswer,question);
         updateTogglerForAnswers = "";
         updateTogglerForAnswersQId = -1;
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @PostMapping("/addOrUpdateQuestion")
     public String addOrUpdateQuestion(@RequestParam String text, @RequestParam Question question){
         if(!text.trim().isEmpty()) userService.addOrUpdateQuestion(text.trim(),question);
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @PostMapping("/addSurvey")
     public String addSurvey(@RequestParam String title, @RequestParam String description, @RequestParam User user){
-        if(title.trim().isEmpty()||description.trim().isEmpty()||userService.getQuesAndAnsw().size()==0) return "redirect:/main";
+        if(title.trim().isEmpty()||description.trim().isEmpty()||userService.getQuesAndAnsw().size()==0) return "redirect:/editSurvey";
         for(Map.Entry<Question, ArrayList<String>> entry: userService.getQuesAndAnsw().entrySet()){
-            if(entry.getKey().getText()==null) return "redirect:/main";
+            if(entry.getKey().getText()==null) return "redirect:/editSurvey";
         }
         if(userService.getCurrentSurvey()==null) userService.addSurvey(title,description,user);
         else userService.updateSurvey(title,description,user);
@@ -94,7 +94,7 @@ public class AdminController {
     @GetMapping("/updateSurvey/{survey}")
     public String updateSurvey(@PathVariable Survey survey){
         userService.setCurrentSurvey(survey);
-        return "redirect:/main";
+        return "redirect:/editSurvey";
     }
     @GetMapping("/deleteSurvey/{survey}")
     public String deleteSurvey(@PathVariable Survey survey, @AuthenticationPrincipal User user){

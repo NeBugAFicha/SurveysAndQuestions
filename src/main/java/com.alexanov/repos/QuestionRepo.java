@@ -13,5 +13,5 @@ public interface QuestionRepo extends JpaRepository<Question, Integer> {
     @Query("Select q from Question q where user_id = ?1 group by survey_id")
     List<Question> findQuestionByUser(User user);
     List<Question> findAllBySurveyAndUser(Survey survey, User user);
-
+    List<Question> findQuestionByUserAndSurvey(User user ,Survey survey);
 }

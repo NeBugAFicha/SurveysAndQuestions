@@ -24,7 +24,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST},mappedBy = "user")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "user", cascade = {CascadeType.PERSIST})
     private List<Question> questions;
     public User(){}
     public String getUsername() {

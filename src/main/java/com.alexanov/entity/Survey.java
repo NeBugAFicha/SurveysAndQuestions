@@ -14,7 +14,7 @@ public class Survey {
     private Calendar startTime;
     private Calendar endTime;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST}, mappedBy = "survey")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "survey", cascade = {CascadeType.PERSIST} )
     private List<Question> questions;
     public Survey(){
     }
