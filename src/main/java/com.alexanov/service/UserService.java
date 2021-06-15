@@ -40,15 +40,6 @@ public class UserService implements UserDetailsService {
         }
         return userRepo.findByUsername(s);
     }
-    public boolean addUser(User user){
-        User userFromDb = userRepo.findByUsername(user.getUsername());
-        if (userFromDb != null) return false;
-        user.setStatus(Status.ACTIVE);
-        user.setRole(Role.USER);
-        user.setPassword(user.getPassword());
-        userRepo.save(user);
-        return true;
-    }
     public void chooseQType(QType qType, Question question){
         questAndAnsw.remove(question);
         question.setqType(qType);
@@ -75,8 +66,10 @@ public class UserService implements UserDetailsService {
         if(currentSurvey!=null&&question.getSurvey()!=null){
             question.setSurvey(null);
             question.setUser(null);
-        }
-        questionRepo.delete(question);
+            int i = question.getId();
+            questionRepo.delete(question);
+            questionRepo.delete(questionRepo.findById(i).get());
+        }else questionRepo.delete(question);
     }
     public void deleteAnswer(String answer, Question questionTemp){
         ArrayList<String> answers = questAndAnsw.get(questionTemp);

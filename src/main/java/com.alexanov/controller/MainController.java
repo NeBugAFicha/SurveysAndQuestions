@@ -29,13 +29,12 @@ public class MainController {
     UserRepo userRepo;
     @Autowired
     QuestionRepo questionRepo;
-    List<Survey> allSurveys;
     List<Survey> completedSurveys;
     @Autowired
     UserService userService;
     @GetMapping
     public String neutralPage(Model model, @AuthenticationPrincipal User user){
-        if(allSurveys==null) allSurveys = surveyRepo.findAll();
+        List<Survey> allSurveys = surveyRepo.findAll();
         Map<Survey, Boolean> completedSurveysMap = new HashMap<Survey, Boolean>();
         if(completedSurveys==null) completedSurveys = questionRepo.findQuestionByUser(user).stream().map(question -> question.getSurvey()).collect(Collectors.toList());
         allSurveys.stream().forEach(survey -> {
@@ -45,18 +44,7 @@ public class MainController {
         model.addAttribute("surveys", completedSurveysMap);
         return "allSurveys";
     }
-    @GetMapping("/registration")
-    public String addUser(){
-        return "registration";
-    }
-    @PostMapping("/registration")
-    public String addUser(User user, Model model) {
-        if (!userService.addUser(user)) {
-            model.addAttribute("message", "User already exists!");
-            return "registration";
-        }
-        return "redirect:/login";
-    }
+
     @GetMapping("/completeSurvey/{survey}")
     public String completeSurvey(@PathVariable Survey survey, Model model){
         if(userService.getQuesAndAnsw().isEmpty()&&userService.getQuestAndAnswUsr().isEmpty()) userService.setCurrentSurvey(survey);
