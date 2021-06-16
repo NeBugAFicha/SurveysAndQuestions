@@ -118,7 +118,7 @@ public class UserService implements UserDetailsService {
                 questionRepo.save(question);
             }
         });
-        questionRepo.deleteAll(questionRepo.findAllBySurvey(currentSurvey).stream()
+        questionRepo.saveAll(questionRepo.findAllBySurvey(currentSurvey).stream()
                 .filter(question -> question.getUser().getId()!=user.getId())
                 .map(question -> {
                     question.setSurvey(null);
@@ -126,6 +126,7 @@ public class UserService implements UserDetailsService {
                     return question;
                 })
                 .collect(Collectors.toList()));
+        questionRepo.deleteAll(questionRepo.findQuestionByUserAndSurvey(null, null));
         questAndAnsw.clear();
         currentSurvey = null;
     }
@@ -134,9 +135,10 @@ public class UserService implements UserDetailsService {
         questions.stream().forEach(question -> {
             question.setSurvey(null);
             question.setUser(null);
-            questionRepo.delete(question);
+            questionRepo.save(question);
         });
         surveyRepo.delete(survey);
+        questionRepo.deleteAll(questionRepo.findQuestionByUserAndSurvey(null, null));
     }
     public void finishSurvey(Survey survey){
         surveyRepo.save(survey);

@@ -34,7 +34,6 @@ public class MainController {
     UserService userService;
     @GetMapping
     public String neutralPage(Model model, @AuthenticationPrincipal User user){
-        questionRepo.deleteAll(questionRepo.findQuestionByUserAndSurvey(null, null));
         List<Survey> allSurveys = surveyRepo.findAll();
         Map<Survey, Boolean> completedSurveysMap = new HashMap<Survey, Boolean>();
         if(completedSurveys==null) completedSurveys = questionRepo.findQuestionByUser(user).stream().map(question -> question.getSurvey()).collect(Collectors.toList());
