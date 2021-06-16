@@ -74,7 +74,7 @@ public class AdminController {
         userService.updateAnswer(answer.trim(),oldAnswer,question);
         updateTogglerForAnswers = "";
         updateTogglerForAnswersQId = -1;
-        return "redirect:/editSurvey";
+        return "redirect:/";
     }
     @PostMapping("/addOrUpdateQuestion")
     public String addOrUpdateQuestion(@RequestParam String text, @RequestParam Question question){

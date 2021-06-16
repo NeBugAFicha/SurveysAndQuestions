@@ -12,7 +12,7 @@
     <a href="/main">ADD NEW SURVEY</a>
 </#if>
 <div class="card-columns">
-    <#list completedSuveysMap as survey,questions>
+    <#list completedSurveysMap as survey,questions>
         <div class="card my-3">
             Title: ${survey.title}</br>
             Description: ${survey.description}</br>

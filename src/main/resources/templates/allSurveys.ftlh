@@ -29,9 +29,9 @@
                 </#if>
                 <a href="/deleteSurvey/${survey.id}">Delete Survey</a>
             </#if>
-            <#if isCompleted??==false>
-                <#if survey.endTime??> The survey is finished</#if>
-                <a href="/completeSurvey/${survey.id}">Complete Survey</a>
+            <#if survey.endTime??> The survey is finished</#if>
+            <#if isCompleted==false && !survey.endTime??>
+                    <a href="/completeSurvey/${survey.id}">Complete Survey</a>
             </#if>
         </div>
     </#list>

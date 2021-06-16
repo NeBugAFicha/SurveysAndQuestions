@@ -152,6 +152,7 @@ public class UserService implements UserDetailsService {
         return currentSurvey;
     }
 
+
     public void setCurrentSurvey(Survey currentSurvey) {
         this.currentSurvey = currentSurvey;
         currentSurvey.getQuestions().stream().forEach(question -> {
@@ -186,5 +187,9 @@ public class UserService implements UserDetailsService {
         questionRepo.save(question1);
         questAndAnsw.remove(question);
         questAndAnswUsr.add(question1);
+        if(questAndAnsw.isEmpty()){
+            questAndAnswUsr.clear();
+            currentSurvey=null;
+        }
     }
 }
